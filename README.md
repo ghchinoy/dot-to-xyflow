@@ -53,17 +53,6 @@ import flowData from './output.json';
 html`<lit-flow .nodes="${flowData.nodes}" .edges="${flowData.edges}"></lit-flow>`
 ```
 
-## Development & HMR
-
-To work on new features for `litflow` (like adding edge labels) while viewing them live in the test-bench:
-
-1. Open `examples/test-bench/main.tsx`.
-2. Uncomment the relative import: `import '../../../litflow/src/lit-flow'`.
-3. Comment out the npm import: `import '@ghchinoy/litflow'`.
-4. Update `vite.config.ts` to allow the parent directory in `server.fs.allow`.
-
-This enables cross-project Hot Module Replacement.
-
 ## Project Structure
 
 - `dot_to_xyflow.go`: The primary Go translator.
@@ -72,4 +61,3 @@ This enables cross-project Hot Module Replacement.
     - `sample_output.json`: The generated result of the translation.
     - `ReactFlowExample.tsx`: Reference React implementation.
     - `LitFlowExample.ts`: Reference Lit implementation.
-
