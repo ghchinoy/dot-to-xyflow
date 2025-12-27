@@ -2,6 +2,26 @@
 
 This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
 
+## Coding Conventions
+
+- **Language**: Go is the primary language for the translator.
+- **Dependency Management**: Always maintain `go.mod` and run `go mod tidy` after adding dependencies.
+- **Error Handling**: Use `log.Fatalf` for terminal errors in CLI tools to provide clear feedback.
+- **Testing**: Every new feature or mapping logic should have a corresponding test in `*_test.go`.
+- **Documentation**: Update `README.md` when changing installation steps or core features.
+
+## Technical Context
+
+- **Coordinate Systems**: 
+    - **Graphviz**: Bottom-up (Y increases upwards).
+    - **XYFlow**: Top-down (Y increases downwards).
+    - **Transformation**: To map coordinates, use the graph's bounding box (`bb`) height: `xyflowY = graphHeight - (gvY + nodeHeight/2)`.
+- **Node Positioning**: Graphviz `pos` attributes are center-based. XYFlow positions are top-left based. Adjust accordingly using node `width` and `height` (converted from inches to points: `1in = 72pts`).
+- **Node Types**:
+    - `input`: Map from shapes like `note`, `invhouse`, or IDs containing "input".
+    - `output`: Map from shapes like `component` or `doublecircle`.
+    - `default`: Standard fallback.
+
 ## Issue Tracking
 
 This project uses **bd (beads)** for issue tracking.
