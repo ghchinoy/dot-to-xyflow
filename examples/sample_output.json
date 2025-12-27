@@ -1,0 +1,105 @@
+{
+  "nodes": [
+    {
+      "id": "Input",
+      "data": {
+        "label": "Creative Brief"
+      },
+      "position": {
+        "x": 250,
+        "y": 0
+      },
+      "type": "input"
+    },
+    {
+      "id": "Gemini",
+      "data": {
+        "label": "Gemini 2.5 Flash\n(Analysis)"
+      },
+      "position": {
+        "x": 250,
+        "y": 120
+      },
+      "type": "default"
+    },
+    {
+      "id": "Imagen",
+      "data": {
+        "label": "Imagen 3.0\n(Generation)"
+      },
+      "position": {
+        "x": 250,
+        "y": 240
+      },
+      "type": "default"
+    },
+    {
+      "id": "Veo",
+      "data": {
+        "label": "Veo 3.1\n(Synthesis)"
+      },
+      "position": {
+        "x": 250,
+        "y": 360
+      },
+      "type": "default"
+    },
+    {
+      "id": "Output",
+      "data": {
+        "label": "Final Asset"
+      },
+      "position": {
+        "x": 250,
+        "y": 480
+      },
+      "type": "output"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "source": "Input",
+      "target": "Gemini",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "label": "Prompt"
+    },
+    {
+      "id": "e1",
+      "source": "Gemini",
+      "target": "Imagen",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "label": "Strategy"
+    },
+    {
+      "id": "e2",
+      "source": "Imagen",
+      "target": "Veo",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "label": "Reference"
+    },
+    {
+      "id": "e3",
+      "source": "Gemini",
+      "target": "Veo",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "label": "Cinematic Prompt"
+    },
+    {
+      "id": "e4",
+      "source": "Veo",
+      "target": "Output",
+      "markerEnd": {
+        "type": "arrowclosed"
+      }
+    }
+  ]
+}

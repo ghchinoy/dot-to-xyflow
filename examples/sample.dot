@@ -1,0 +1,17 @@
+digraph GenMediaExample {
+    rankdir=LR;
+    node [shape=box, style=rounded];
+
+    Input [label="Creative Brief", shape=note];
+    Gemini [label="Gemini 2.5 Flash\n(Analysis)"];
+    Imagen [label="Imagen 3.0\n(Generation)"];
+    Veo [label="Veo 3.1\n(Synthesis)"];
+    Output [label="Final Asset", shape=component];
+
+    Input -> Gemini [label="Prompt"];
+    Gemini -> Imagen [label="Strategy"];
+    Imagen -> Veo [label="Reference"];
+    Gemini -> Veo [label="Cinematic Prompt"];
+    Veo -> Output;
+}
+

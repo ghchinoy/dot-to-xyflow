@@ -1,0 +1,27 @@
+{
+  "name": "test-bench",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@ghchinoy/litflow": "^0.1.1",
+    "@lit-labs/signals": "^0.2.0",
+    "@xyflow/react": "^12.10.0",
+    "@xyflow/system": "^0.0.74",
+    "d3-drag": "^3.0.0",
+    "d3-interpolate": "^3.0.1",
+    "d3-selection": "^3.0.0",
+    "d3-zoom": "^3.0.0",
+    "lit": "^3.3.2",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "vite": "^6.4.1"
+  }
+}

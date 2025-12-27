@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenMedia Flow Test Bench</title>
+    <style>
+        body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
+        .header { padding: 1rem; background: #f1f5f9; border-bottom: 1px solid #cbd5e1; }
+        .container { flex: 1; display: flex; gap: 1rem; padding: 1rem; }
+        .view { flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; flex-direction: column; }
+        .view h2 { padding: 0.5rem; margin: 0; background: #f8fafc; font-size: 1rem; border-bottom: 1px solid #e2e8f0; }
+        #react-root, #lit-root { flex: 1; min-height: 0; position: relative; }
+
+        /* MATERIAL 3 TOKENS FOR LITFLOW */
+        :root {
+            --md-sys-color-background: #ffffff;
+            --md-sys-color-on-background: #1a1c1e;
+            --md-sys-color-primary: #0061a4;
+            --md-sys-color-secondary: #535f70;
+            --md-sys-color-outline: #73777f;
+            --md-sys-color-outline-variant: #c3c7cf;
+            --md-sys-typescale-body-medium-font: sans-serif;
+            --md-sys-typescale-body-medium-size: 14px;
+            --md-sys-shape-corner-small: 8px;
+            --md-sys-elevation-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+            --md-sys-elevation-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+            
+            --lit-flow-node-bg: #f8fafc;
+            --lit-flow-node-border: #cbd5e1;
+            --lit-flow-node-text: #0f172a;
+            --lit-flow-node-selected-border: #3b82f6;
+            --lit-flow-handle-outline: #ffffff;
+            --lit-flow-handle-source: #3b82f6;
+            --lit-flow-handle-target: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>dot-to-xyflow: React vs Lit Comparison</h1>
+    </div>
+    <div class="container">
+        <div class="view">
+            <h2>React (XYFlow)</h2>
+            <div id="react-root"></div>
+        </div>
+        <div class="view">
+            <h2>Lit (LitFlow)</h2>
+            <div id="lit-root">
+                <!-- Lit element will be injected here -->
+            </div>
+        </div>
+    </div>
+    <div class="footer" style="padding: 1rem; background: #fff; border-top: 1px solid #cbd5e1; text-align: center;">
+        <h2>Original Graphviz Render (.png)</h2>
+        <img src="./sample_original.png" alt="Original Graphviz Diagram" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px; padding: 10px;">
+    </div>
+    <script type="module" src="./main.tsx"></script>
+</body>
+</html>
