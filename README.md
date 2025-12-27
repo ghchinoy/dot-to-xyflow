@@ -4,7 +4,9 @@ A high-performance translator that converts Graphviz `.dot` files into XYFlow-co
 
 ## Core Features
 
-- **Go-powered**: Written in Go for maximum speed and zero dependencies.
+- **Go-powered**: Written in Go for maximum speed.
+- **Robust Parsing**: Uses `go-graphviz` for full DOT specification support.
+- **Automatic Layout**: Leverages Graphviz layout engines (dot, neato, etc.) to generate node positions.
 - **XYFlow Compatible**: Outputs JSON structure ready for `@xyflow/react` and `@xyflow/system`.
 - **LitFlow Support**: Designed to work seamlessly with the sibling `litflow` project.
 - **Intelligent Mapping**: Translates Graphviz shapes, labels, and directions into appropriate XYFlow node types and properties.
@@ -13,6 +15,14 @@ A high-performance translator that converts Graphviz `.dot` files into XYFlow-co
 
 ### Prerequisites
 - [Go](https://go.dev/) installed on your system.
+- [Graphviz](https://graphviz.org/) (optional, but recommended for layout engines).
+
+### Installation
+Clone the repository and install dependencies:
+
+```bash
+go mod tidy
+```
 
 ### Usage
 Run the translator against any `.dot` file:
@@ -57,9 +67,9 @@ This enables cross-project Hot Module Replacement.
 ## Project Structure
 
 - `dot_to_xyflow.go`: The primary Go translator.
-- `dot_to_xyflow.py`: A legacy Python reference implementation.
 - `examples/`:
     - `sample.dot`: A representative Graphviz workflow.
     - `sample_output.json`: The generated result of the translation.
     - `ReactFlowExample.tsx`: Reference React implementation.
     - `LitFlowExample.ts`: Reference Lit implementation.
+

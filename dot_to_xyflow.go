@@ -1,11 +1,16 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"os"
-	"regexp"
+	"strconv"
 	"strings"
+
+	"github.com/goccy/go-graphviz"
 )
 
 type NodeData struct {
@@ -49,74 +54,111 @@ func main() {
 
 	content, err := os.ReadFile(os.Args[1])
 	if err != nil {
-		fmt.Printf("Error reading file: %v\n", err)
-		return
+		log.Fatalf("Error reading file: %v", err)
 	}
 
-	dot := string(content)
-	
-	// Pre-cleanup: remove comments and rankdir
-	dot = regexp.MustCompile(`(?m)//.*`).ReplaceAllString(dot, "")
-	dot = regexp.MustCompile(`/\[\s\S]*?\*/`).ReplaceAllString(dot, "")
-	dot = regexp.MustCompile(`rankdir=.*;`).ReplaceAllString(dot, "")
+	ctx := context.Background()
+	gv, err := graphviz.New(ctx)
+	if err != nil {
+		log.Fatalf("Error creating graphviz context: %v", err)
+	}
+	defer gv.Close()
 
-	nodes := make(map[string]Node)
-	var nodeIds []string
-	var edges []Edge
+	graph, err := graphviz.ParseBytes(content)
+	if err != nil {
+		log.Fatalf("Error parsing DOT: %v", err)
+	}
+	defer graph.Close()
 
-	// 1. First Pass: Get all Edges (Src -> Tgt [label="..."])
-	edgePat := regexp.MustCompile(`(\w+)\s*->\s*(\w+)(?:\s*\[[^\]]*label\s*=\s*"([^"]+)"[^\]]*\])?`)
-	eMatches := edgePat.FindAllStringSubmatch(dot, -1)
-	for i, m := range eMatches {
-		src, tgt, label := m[1], m[2], m[3]
+	// Set layout engine (default to dot)
+	gv.SetLayout(graphviz.DOT)
+
+	// Render to XDOT to trigger layout and populate attributes
+	if err := gv.Render(ctx, graph, graphviz.XDOT, io.Discard); err != nil {
+		log.Fatalf("Error performing layout: %v", err)
+	}
+
+	// Get graph bounding box to flip Y axis
+	bb := graph.GetStr("bb")
+	var llx, lly, urx, ury float64
+	fmt.Sscanf(bb, "%f,%f,%f,%f", &llx, &lly, &urx, &ury)
+	graphHeight := ury
+
+	nodes := []Node{}
+	edges := []Edge{}
+
+	// Iterate nodes
+	n, err := graph.FirstNode()
+	for n != nil && err == nil {
+		id, _ := n.Name()
+		label := n.GetStr("label")
+		if label == "" {
+			label = id
+		}
+		label = strings.ReplaceAll(label, "\n", "\n")
+
+		posStr := n.GetStr("pos")
+		var x, y float64
+		if posStr != "" {
+			fmt.Sscanf(posStr, "%f,%f", &x, &y)
+		}
+
+		// Graphviz pos is center. XYFlow is top-left.
+		// width/height are in inches, convert to points (72 dpi)
+		width, _ := strconv.ParseFloat(n.GetStr("width"), 64)
+		height, _ := strconv.ParseFloat(n.GetStr("height"), 64)
+		wPts := width * 72
+		hPts := height * 72
 		
-		if src == "node" || src == "graph" || src == "edge" { continue }
-
-		if _, ok := nodes[src]; !ok {
-			nodes[src] = Node{ID: src, Data: NodeData{Label: src}, Type: "default"}
-			nodeIds = append(nodeIds, src)
-		}
-		if _, ok := nodes[tgt]; !ok {
-			nodes[tgt] = Node{ID: tgt, Data: NodeData{Label: tgt}, Type: "default"}
-			nodeIds = append(nodeIds, tgt)
-		}
-
-		edges = append(edges, Edge{
-			ID: fmt.Sprintf("e%d", i),
-			Source: src, Target: tgt,
-			MarkerEnd: MarkerEnd{Type: "arrowclosed"},
-			Label: label,
-		})
-	}
-
-	// 2. Second Pass: Explicit Node definitions
-	nodePat := regexp.MustCompile(`(?m)^\s*(\w+)\s*\[([^\]]*label\s*=\s*"([^"]+)"[^\]]*)\]`)
-	nMatches := nodePat.FindAllStringSubmatch(dot, -1)
-	for _, m := range nMatches {
-		id, attr, label := m[1], m[2], strings.ReplaceAll(m[3], "\\n", "\n")
-		if id == "node" || id == "graph" || id == "edge" { continue }
+		// Adjust x from center to left
+		x = x - (wPts / 2)
+		// Flip Y: Graphviz is bottom-up, XYFlow is top-down
+		// y is center, so top-left Y in XYFlow is graphHeight - (y + hPts/2)
+		y = graphHeight - (y + hPts/2)
 
 		nodeType := "default"
-		if strings.Contains(attr, "shape=component") { nodeType = "output" }
-		if strings.Contains(strings.ToLower(id), "input") { nodeType = "input" }
-
-		n, exists := nodes[id]
-		if !exists {
-			nodeIds = append(nodeIds, id)
-			n = Node{ID: id}
+		shape := n.GetStr("shape")
+		if shape == "component" || shape == "doublecircle" {
+			nodeType = "output"
+		} else if shape == "note" || shape == "invhouse" || strings.Contains(strings.ToLower(id), "input") {
+			nodeType = "input"
 		}
-		n.Data.Label = label
-		n.Type = nodeType
-		nodes[id] = n
+
+		nodes = append(nodes, Node{
+			ID: id,
+			Data: NodeData{Label: label},
+			Position: Position{X: x, Y: y},
+			Type: nodeType,
+		})
+		n, err = graph.NextNode(n)
 	}
 
-	var finalNodes []Node
-	for i, id := range nodeIds {
-		node := nodes[id]
-		node.Position = Position{X: 250, Y: float64(i * 120)}
-		finalNodes = append(finalNodes, node)
+	// Iterate edges
+	edgeCount := 0
+	n, err = graph.FirstNode()
+	for n != nil && err == nil {
+		e, err := graph.FirstOut(n)
+		for e != nil && err == nil {
+			tail, _ := e.Tail()
+			head, _ := e.Head()
+			src, _ := tail.Name()
+			tgt, _ := head.Name()
+			
+			label := e.GetStr("label")
+
+			edges = append(edges, Edge{
+				ID: fmt.Sprintf("e%d", edgeCount),
+				Source: src,
+				Target: tgt,
+				MarkerEnd: MarkerEnd{Type: "arrowclosed"},
+				Label: label,
+			})
+			edgeCount++
+			e, err = graph.NextOut(e)
+		}
+		n, err = graph.NextNode(n)
 	}
 
-	out, _ := json.MarshalIndent(XYFlowData{Nodes: finalNodes, Edges: edges}, "", "  ")
+	out, _ := json.MarshalIndent(XYFlowData{Nodes: nodes, Edges: edges}, "", "  ")
 	fmt.Println(string(out))
 }

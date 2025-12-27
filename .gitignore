@@ -46,3 +46,5 @@ ENV/
 # Project specific
 examples/test-bench/sample_original.png
 examples/test-bench/sample_output.json
+firebase-debug.log
+.genkit/

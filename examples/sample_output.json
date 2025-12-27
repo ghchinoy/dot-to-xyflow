@@ -6,41 +6,41 @@
         "label": "Creative Brief"
       },
       "position": {
-        "x": 250,
-        "y": 0
+        "x": -0.0009999999999976694,
+        "y": 42.8
       },
       "type": "input"
     },
     {
       "id": "Gemini",
       "data": {
-        "label": "Gemini 2.5 Flash\n(Analysis)"
+        "label": "Gemini 2.5 Flash\\n(Analysis)"
       },
       "position": {
-        "x": 250,
-        "y": 120
+        "x": 172.9144,
+        "y": 39.999919999999996
       },
       "type": "default"
     },
     {
       "id": "Imagen",
       "data": {
-        "label": "Imagen 3.0\n(Generation)"
+        "label": "Imagen 3.0\\n(Generation)"
       },
       "position": {
-        "x": 250,
-        "y": 240
+        "x": 375.772,
+        "y": -0.00007999999999697138
       },
       "type": "default"
     },
     {
       "id": "Veo",
       "data": {
-        "label": "Veo 3.1\n(Synthesis)"
+        "label": "Veo 3.1\\n(Synthesis)"
       },
       "position": {
-        "x": 250,
-        "y": 360
+        "x": 563.4008,
+        "y": 39.999919999999996
       },
       "type": "default"
     },
@@ -50,8 +50,8 @@
         "label": "Final Asset"
       },
       "position": {
-        "x": 250,
-        "y": 480
+        "x": 679.3964000000001,
+        "y": 42.8
       },
       "type": "output"
     }
@@ -77,21 +77,21 @@
     },
     {
       "id": "e2",
-      "source": "Imagen",
-      "target": "Veo",
-      "markerEnd": {
-        "type": "arrowclosed"
-      },
-      "label": "Reference"
-    },
-    {
-      "id": "e3",
       "source": "Gemini",
       "target": "Veo",
       "markerEnd": {
         "type": "arrowclosed"
       },
       "label": "Cinematic Prompt"
+    },
+    {
+      "id": "e3",
+      "source": "Imagen",
+      "target": "Veo",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "label": "Reference"
     },
     {
       "id": "e4",
